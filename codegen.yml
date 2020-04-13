@@ -1,0 +1,21 @@
+overwrite: true
+schema: "server/graphql/types/*.types.ts"
+documents: null
+generates:
+  server/types.ts:
+    config:
+      dbTypeSuffix: Entity
+      contextType: ./context#Context
+      mappers:
+        User: UserEntity
+        Ride: RideEntity
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+      - "typescript-mongodb"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"
+hooks:
+  afterAllFileWrite:
+    - prettier --write
