@@ -1,4 +1,4 @@
-import { UserResolvers, User, UserEntity } from "../../types";
+import { UserResolvers, User, UserEntity } from "../../server/types";
 
 export const resolvers: UserResolvers = {
   id(user) {

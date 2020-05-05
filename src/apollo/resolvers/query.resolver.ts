@@ -1,4 +1,4 @@
-import { QueryResolvers, RideEntity } from "../../types";
+import { QueryResolvers, RideEntity } from "../../server/types";
 import { ObjectID } from "mongodb";
 import { AuthenticationError } from "apollo-server-micro";
 

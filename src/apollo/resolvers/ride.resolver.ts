@@ -1,6 +1,6 @@
-import { RideResolvers } from "../../types";
+import { RideResolvers } from "../../server/types";
 import * as polyline from "@mapbox/polyline";
-import { MAPBOX_TOKEN } from "../../../config";
+import { MAPBOX_TOKEN } from "../../config";
 export const resolvers: RideResolvers = {
   id(ride) {
     return ride._id.toHexString();

@@ -14,8 +14,8 @@ import {
   ENABLE_INVITE_CODE,
   PASSWORD_REGEX,
   SESSION_SECRET,
-} from "../../../config";
-import { MutationResolvers, Point } from "../../types";
+} from "../../config";
+import { MutationResolvers, Point } from "../../server/types";
 
 export const resolvers: MutationResolvers = {
   async registerUser(_, { input }, ctx) {
