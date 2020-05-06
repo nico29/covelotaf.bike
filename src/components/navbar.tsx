@@ -23,8 +23,12 @@ const LOGOUT_MUTATION = gql`
 export default function Navbar() {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const { data } = useQuery<{ currentUser?: User }>(CURRENT_USER_QUERY);
-  const [logout] = useMutation(LOGOUT_MUTATION);
+  const { data } = useQuery<{ currentUser?: User }>(CURRENT_USER_QUERY, {
+    ssr: false,
+  });
+  const [logout] = useMutation(LOGOUT_MUTATION, {
+    refetchQueries: [{ query: CURRENT_USER_QUERY }],
+  });
   const user = data?.currentUser;
   return (
     <nav className="bg-gray-800">

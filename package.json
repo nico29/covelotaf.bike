@@ -20,6 +20,7 @@
     "apollo-server-micro": "^2.12.0",
     "bcryptjs": "^2.4.3",
     "cookie": "^0.4.0",
+    "formik": "^2.1.4",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "graphql-tools": "^5.0.0",
@@ -45,7 +46,7 @@
     "@types/react": "^16.9.34",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.0.4",
-    "tailwindcss": "^1.1.4",
+    "tailwindcss": "^1.4.5",
     "typescript": "^3.8.3"
   }
 }

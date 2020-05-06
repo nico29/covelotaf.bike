@@ -4,6 +4,7 @@ import { AuthenticationError } from "apollo-server-micro";
 
 export const resolvers: QueryResolvers = {
   currentUser(_, __, context) {
+    console.log(context);
     return context.userID
       ? context.db.users.findOne({ _id: new ObjectID(context.userID) })
       : null;

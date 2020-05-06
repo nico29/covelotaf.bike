@@ -3,13 +3,12 @@ import { GraphQLContext } from "../../server/context";
 import DatabaseManager from "../../server/database";
 import { schema } from "../../apollo/schema";
 
-(async function () {
-  await DatabaseManager.connect();
-})();
-
 const apolloServer = new ApolloServer({
   schema,
-  context: ({ req, res }) => new GraphQLContext(req, res),
+  context: async ({ req, res }) => {
+    await DatabaseManager.connect();
+    return new GraphQLContext(req, res);
+  },
 });
 
 export const config = {

@@ -1,4 +1,4 @@
-import { Db, Collection } from "mongodb";
+import { Collection } from "mongodb";
 import * as jwt from "jsonwebtoken";
 
 import { NextApiRequest, NextApiResponse } from "next";
@@ -21,6 +21,7 @@ export class GraphQLContext implements Context {
     public request: NextApiRequest,
     public response: NextApiResponse
   ) {
+    console.log("building context");
     const session = request.cookies.session;
     if (session) {
       try {
