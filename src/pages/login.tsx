@@ -44,11 +44,8 @@ const LoginPage: NextPage = () => {
   return (
     <main>
       <NavigationBar />
-      <section
-        className="container flex content-center items-center justify-center mx-auto"
-        style={{ height: "80vh" }}
-      >
-        <div className="w-full lg:w-4/12 p-4 pt-8 pb-8 rounded border border-solid border-gray-500 shadow-lg">
+      <section className="container flex content-center items-center justify-center mx-auto py-20">
+        <div className="w-full lg:w-5/12 p-8 rounded shadow-lg bg-white">
           <h1 className="text-xl mb-3 textgray-600">Se connecter</h1>
           <div className="divide-y divide-gray-400">
             <form onSubmit={formik.handleSubmit} className="pb-3">
