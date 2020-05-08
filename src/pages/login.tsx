@@ -72,7 +72,7 @@ const LoginPage: NextPage = () => {
                   htmlFor="password"
                   className="block text-gray-700 uppercase text-xs font-medium mb-2"
                 >
-                  Password
+                  Mot de passe
                 </label>
                 <input
                   type="password"
