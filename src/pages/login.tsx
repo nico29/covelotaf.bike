@@ -1,15 +1,14 @@
-import NavigationBar from "../components/navbar";
+import { useMutation } from "@apollo/react-hooks";
+import { useFormik } from "formik";
+import gql from "graphql-tag";
+import { NextPage } from "next";
+import Link from "next/link";
+import Router from "next/router";
 import * as React from "react";
 import { withApollo } from "../apollo/client";
-import { NextPage } from "next";
-import { useFormik } from "formik";
-import { useMutation } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import { User, MutationLoginArgs } from "../server/types";
-import Router from "next/router";
-import Link from "next/link";
-import { PASSWORD_REGEX } from "../config";
-import { isNonNullType } from "graphql";
+import NavigationBar from "../components/navbar";
+import { MutationLoginArgs, User } from "../server/types";
+import { ApolloError } from "apollo-client";
 
 const LOGIN_MUTATION = gql`
   mutation LOGIN_MUTATION($email: String!, $password: String!) {
@@ -30,12 +29,15 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
-const ErrorMessage: React.FunctionComponent<{ error?: Error }> = ({
+const ErrorMessage: React.FunctionComponent<{ error?: ApolloError }> = ({
   error,
 }) => {
   if (!error) return null;
+  const {
+    graphQLErrors: [err],
+  } = error;
   const message =
-    error.message === "INVALID_CREDENTIALS"
+    err.message === "INVALID_CREDENTIALS"
       ? "Les identifiants sont incorrects"
       : "Une erreur est survenue";
 
@@ -64,6 +66,8 @@ const LoginPage: NextPage = () => {
   >(LOGIN_MUTATION, { refetchQueries: [{ query: CURRENT_USER_QUERY }] });
   const formik = useFormik({
     initialValues: { email: "", password: "" },
+    validateOnChange: false,
+    validateOnBlur: true,
     validate(values) {
       const errors: { email?: string; password?: string } = {};
 

@@ -38,13 +38,13 @@ export const resolvers: MutationResolvers = {
     }
     // 1. check if the user already exists
     let user = await ctx.db.users.findOne({ email: input.email });
-    if (user) throw new UserInputError("email already exists");
+    if (user) throw new UserInputError("EMAIL_TAKEN");
     user = await ctx.db.users.findOne({ username: input.username });
-    if (user) throw new UserInputError("username already exists");
+    if (user) throw new UserInputError("USERNAME_TAKEN");
 
     // 2. check password complexity
     if (!PASSWORD_REGEX.test(input.password)) {
-      throw new UserInputError("password too weak");
+      throw new UserInputError("PASSWORD_WEAK");
     }
 
     // 3. generate password hash

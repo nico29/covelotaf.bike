@@ -6,11 +6,9 @@ import Router from "next/router";
 import * as React from "react";
 import { withApollo } from "../apollo/client";
 import NavigationBar from "../components/navbar";
-import {
-  RegisterUserInput,
-  User,
-  MutationRegisterUserArgs,
-} from "../server/types";
+import { User, MutationRegisterUserArgs } from "../server/types";
+import { PASSWORD_REGEX } from "../config";
+import { ApolloError } from "apollo-client";
 
 const REGISTER_MUTATION = gql`
   mutation REGISTER_USER($input: RegisterUserInput!) {
@@ -31,13 +29,50 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
-const RegisterPage: NextPage = () => {
-  const [register, { loading }] = useMutation<User, MutationRegisterUserArgs>(
-    REGISTER_MUTATION,
-    {
-      refetchQueries: [{ query: CURRENT_USER_QUERY }],
-    }
+const ErrorMessage: React.FunctionComponent<{ error?: ApolloError }> = ({
+  error,
+}) => {
+  if (!error) return null;
+  const {
+    graphQLErrors: [err],
+  } = error;
+  let message: string;
+
+  if (err.message === "EMAIL_TAKEN") {
+    message = "Cet email n'est pas disponible";
+  } else if (err.message === "USERNAME_TAKEN") {
+    message = "Ce nom d'utilisateur n'est pas disponible";
+  } else if (err.message === "PASSWORD_WEAK") {
+    message = "Le mot de passe est trop faible";
+  } else {
+    message = "Une erreur est survenue";
+  }
+
+  return (
+    <div className="mb-3 flex justify-center">
+      <svg
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        className="h-6 w-6 text-red-500"
+      >
+        <path
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+          clipRule="evenodd"
+          fillRule="evenodd"
+        ></path>
+      </svg>
+      <p className="text-sm text-red-500 italic">{message}</p>
+    </div>
   );
+};
+
+const RegisterPage: NextPage = () => {
+  const [register, { loading, error: registerError }] = useMutation<
+    User,
+    MutationRegisterUserArgs
+  >(REGISTER_MUTATION, {
+    refetchQueries: [{ query: CURRENT_USER_QUERY }],
+  });
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -46,9 +81,33 @@ const RegisterPage: NextPage = () => {
       lastname: "",
       username: "",
     },
-    async onSubmit(values, { setSubmitting }) {
-      await register({ variables: { input: { ...values } } });
-      Router.push("/");
+    validateOnChange: false,
+    validateOnBlur: true,
+    validate(values) {
+      const errors: {
+        email?: string;
+        password?: string;
+        username?: string;
+      } = {};
+
+      if (!values.password.match(PASSWORD_REGEX)) {
+        errors.password = "Mot de passe trop faible";
+      }
+
+      if (!values.email || !values.email.includes("@")) {
+        errors.email = "L'adresse email est invalide";
+      }
+
+      if (!values.username) {
+        errors.username = "Il vous faut un nom d'utilisateur !";
+      }
+      return errors;
+    },
+    onSubmit(values, { setSubmitting }) {
+      register({ variables: { input: { ...values } } }).then(() => {
+        setSubmitting(false);
+        Router.push("/");
+      });
     },
   });
   return (
@@ -57,6 +116,7 @@ const RegisterPage: NextPage = () => {
       <section className="container flex content-center items-center justify-center mx-auto py-20">
         <div className="w-full lg:w-5/12 p-8 rounded shadow-lg bg-white">
           <h1 className="text-xl mb-4 textgray-600">Créer un compte</h1>
+          <ErrorMessage error={registerError} />
           <div>
             <form onSubmit={formik.handleSubmit} className="pb-3">
               <div>
@@ -67,15 +127,22 @@ const RegisterPage: NextPage = () => {
                   Email *
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   name="email"
                   id="email"
                   placeholder="tim.cook@apple.com"
-                  className="w-full text-sm text-gray-700 border rounded border-solid border-grey-600 p-2 mb-3 focus:outline-none focus:shadow-outline"
+                  className={`w-full text-sm text-gray-700 border rounded border-solid border-grey-600 p-2 mb-3 focus:outline-none focus:shadow-outline ${
+                    formik.errors.email ? "border-red-500" : ""
+                  }`}
                   style={{ transition: "all .15s ease" }}
                 />
+                {formik.errors.email && (
+                  <p className="text-red-500 text-xs italic mb-2">
+                    {formik.errors.email}
+                  </p>
+                )}
               </div>
               <div>
                 <label
@@ -91,9 +158,16 @@ const RegisterPage: NextPage = () => {
                   name="password"
                   id="password"
                   placeholder="*********"
-                  className="w-full text-sm text-gray-700 border rounded border-solid border-grey-600 p-2 mb-3 focus:outline-none focus:shadow-outline"
+                  className={`w-full text-sm text-gray-700 border rounded border-solid border-grey-600 p-2 mb-3 focus:outline-none focus:shadow-outline ${
+                    formik.errors.password ? "border-red-500" : ""
+                  }`}
                   style={{ transition: "all .15s ease" }}
                 />
+                {formik.errors.password && (
+                  <p className="text-red-500 text-xs italic mb-2">
+                    {formik.errors.password}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -110,9 +184,17 @@ const RegisterPage: NextPage = () => {
                   name="username"
                   id="username"
                   placeholder="tim.cook"
-                  className="w-full text-sm text-gray-700 border rounded border-solid border-grey-600 p-2 mb-3 focus:outline-none focus:shadow-outline"
+                  className={`w-full text-sm text-gray-700 border rounded border-solid border-grey-600 p-2 mb-3 focus:outline-none focus:shadow-outline ${
+                    formik.errors.username ? "border-red-500" : ""
+                  }`}
                   style={{ transition: "all .15s ease" }}
                 />
+
+                {formik.errors.username && (
+                  <p className="text-red-500 text-xs italic mb-2">
+                    {formik.errors.username}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-wrap -mx-3 mb-6">
@@ -159,7 +241,7 @@ const RegisterPage: NextPage = () => {
                 disabled={loading}
                 className="w-full flex items-center justify-center mt-4 mb-4 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out md:py-2 md:text-sm md:px-4"
               >
-                Se connecter
+                Créer un compte
                 {loading && <span>...</span>}
               </button>
             </form>
