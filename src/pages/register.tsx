@@ -48,7 +48,6 @@ const RegisterPage: NextPage = () => {
     },
     async onSubmit(values, { setSubmitting }) {
       await register({ variables: { input: { ...values } } });
-      setSubmitting(false);
       Router.push("/");
     },
   });
@@ -57,7 +56,7 @@ const RegisterPage: NextPage = () => {
       <NavigationBar />
       <section className="container flex content-center items-center justify-center mx-auto py-20">
         <div className="w-full lg:w-5/12 p-8 rounded shadow-lg bg-white">
-          <h1 className="text-xl mb-3 textgray-600">Créer un compte</h1>
+          <h1 className="text-xl mb-4 textgray-600">Créer un compte</h1>
           <div>
             <form onSubmit={formik.handleSubmit} className="pb-3">
               <div>

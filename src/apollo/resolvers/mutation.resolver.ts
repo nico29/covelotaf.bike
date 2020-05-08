@@ -87,11 +87,11 @@ export const resolvers: MutationResolvers = {
   async login(_, { email, password }, ctx) {
     // 1. check if a user with the email exist
     const user = await ctx.db.users.findOne({ email });
-    if (!user) throw new UserInputError("Invalid credentials");
+    if (!user) throw new UserInputError("INVALID_CREDENTIALS");
 
     // 2. verify if the password match
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new UserInputError("Invalid credentials");
+    if (!match) throw new UserInputError("INVALID_CREDENTIALS");
 
     // 3. craft the session token
     const sessionToken = jwt.sign(
