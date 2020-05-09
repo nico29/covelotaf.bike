@@ -31,5 +31,6 @@ export default gql`
     name: String!
     points: [PointInput!]!
     description: String
+    distance: Float!
   }
 `;

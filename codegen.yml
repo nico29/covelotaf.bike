@@ -1,8 +1,8 @@
 overwrite: true
-schema: "server/graphql/types/*.types.ts"
+schema: "src/apollo/types/*.types.ts"
 documents: null
 generates:
-  server/types.ts:
+  src/server/types.ts:
     config:
       dbTypeSuffix: Entity
       contextType: ./context#Context

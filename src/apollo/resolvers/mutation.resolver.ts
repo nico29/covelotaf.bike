@@ -212,24 +212,15 @@ export const resolvers: MutationResolvers = {
 
     if (!user) throw new AuthenticationError("LOGIN_REQUIRED");
     if (input.points.length <= 2) {
-      throw new UserInputError("Ride to short");
+      throw new UserInputError("RIDE_TOO_SHORT");
     }
     if (!input.name) {
-      throw new UserInputError("Missing ride name");
+      throw new UserInputError("RIDE_NAME_REQUIRED");
     }
-
-    // 2. compute ride distance
-    const line = turf.lineString(
-      input.points.map((point) => [point.latitude, point.longitude])
-    );
-
-    // TODO: take input from mapbox direction
-    const distance = turf.length(line, { units: "meters" });
 
     // 3. store ride in database
     const record = await ctx.db.rides.insertOne({
       ...input,
-      distance: Math.round(distance * 100) / 100,
       points: input.points as Point[],
       creatorID: user._id,
       createdAt: new Date(),

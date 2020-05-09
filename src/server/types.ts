@@ -88,6 +88,7 @@ export type CreateRideInput = {
   name: Scalars["String"];
   points: Array<PointInput>;
   description?: Maybe<Scalars["String"]>;
+  distance: Scalars["Float"];
 };
 
 export type User = {
