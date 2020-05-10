@@ -12,7 +12,7 @@ import { MutationCreateRideArgs, Ride } from "../server/types";
 import * as MapboxDirections from "@nico29/mapbox-gl-directions";
 import { ApolloError } from "apollo-client";
 
-const Directions = dynamic(() => import("../components/directions"), {
+const DirectionsInput = dynamic(() => import("../components/directions"), {
   ssr: false,
 });
 
@@ -200,7 +200,7 @@ const RideCreationPage: NextPage = () => {
                 </button>
               </div>
               <div className="bg-gray-400 md:w-9/12 rounded overflow-hidden">
-                <Directions
+                <DirectionsInput
                   mapContainerID="direction-map"
                   style={{ minHeight: "80vh", position: "relative" }}
                   onMapLoad={(_, plugin) => {

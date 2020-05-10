@@ -4,13 +4,13 @@ import * as MapboxDirections from "@nico29/mapbox-gl-directions";
 import polyline from "@mapbox/polyline";
 import { Point } from "../server/types";
 
-export interface IDirectionsManagerProps {
+export interface DirectionInputProps {
   onMapLoad?: (map: Mapbox.Map, plugin: MapboxDirections) => void;
   onReceiveDirections?: (points: Point[], distance: number) => void;
   mapContainerID: string;
   style?: React.CSSProperties;
 }
-class DirectionsManager extends React.PureComponent<IDirectionsManagerProps> {
+class DirectionsManager extends React.PureComponent<DirectionInputProps> {
   private map: Mapbox.Map;
   private directions: MapboxDirections;
   private zoomControl: Mapbox.NavigationControl;
