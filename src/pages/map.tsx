@@ -22,6 +22,8 @@ const ALL_RIDES_QUERY = gql`
       description
       distance
       color
+      start
+      finish
       creator {
         id
         username
@@ -57,7 +59,7 @@ const RidesMapPage: NextPage = () => {
                 Créer un trajet
               </a>
             </Link>
-            <h1 className="text-3xl tracking-wide ml-4 text-gray-800 font-semibold">
+            <h1 className="text-3xl tracking-wide ml-4 mb-3 text-gray-800 font-semibold">
               Liste des trajets
             </h1>
             <div className="overflow-y-scroll" style={{ maxHeight: "75vh" }}>
@@ -66,6 +68,7 @@ const RidesMapPage: NextPage = () => {
                   ride={r}
                   key={r.id}
                   onRideClicked={setSelectedRide}
+                  focused={selectedRide === r.id}
                 />
               ))}
             </div>

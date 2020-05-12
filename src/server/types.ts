@@ -69,6 +69,8 @@ export type Ride = {
   description?: Maybe<Scalars["String"]>;
   points: Array<Point>;
   distance: Scalars["Float"];
+  start: Scalars["String"];
+  finish: Scalars["String"];
   previewURL: Scalars["String"];
   color: Scalars["String"];
 };
@@ -426,6 +428,8 @@ export type RideResolvers<
   >;
   points?: Resolver<Array<ResolversTypes["Point"]>, ParentType, ContextType>;
   distance?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  start?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  finish?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   previewURL?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   color?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
@@ -508,6 +512,8 @@ export type RideEntity = {
   description?: Maybe<string>;
   points: Array<Point>;
   distance: number;
+  start: string;
+  finish: string;
   creatorID: ObjectID;
   createdAt: Date;
 };

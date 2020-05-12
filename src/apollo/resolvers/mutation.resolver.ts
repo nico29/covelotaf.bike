@@ -1,4 +1,3 @@
-import * as turf from "@turf/turf";
 import {
   AuthenticationError,
   ForbiddenError,
@@ -16,6 +15,7 @@ import {
   SESSION_SECRET,
 } from "../../config";
 import { MutationResolvers, Point } from "../../server/types";
+import Mapbox from "@mapbox/mapbox-sdk/services/geocoding";
 
 export const resolvers: MutationResolvers = {
   async registerUser(_, { input }, ctx) {
@@ -218,12 +218,38 @@ export const resolvers: MutationResolvers = {
       throw new UserInputError("RIDE_NAME_REQUIRED");
     }
 
+    // reverse geocode start point end endpoint
+    const geocoder = Mapbox({ accessToken: process.env.MAPBOX_TOKEN });
+    const startPoint = [...input.points].reverse().pop();
+    const startResponse = await geocoder
+      .reverseGeocode({
+        query: [startPoint.longitude, startPoint.latitude],
+        mode: "mapbox.places",
+        types: ["place", "locality"],
+        language: ["fr"],
+      })
+      .send();
+    const finishPoint = [...input.points].pop();
+    const endResponse = await geocoder
+      .reverseGeocode({
+        query: [finishPoint.longitude, finishPoint.latitude],
+        mode: "mapbox.places",
+        types: ["place", "locality"],
+        language: ["fr"],
+      })
+      .send();
+
+    const start = startResponse?.body?.features?.[0]?.text || "";
+    const finish = endResponse?.body?.features?.[0]?.text || "";
+
     // 3. store ride in database
     const record = await ctx.db.rides.insertOne({
       ...input,
       points: input.points as Point[],
       creatorID: user._id,
       createdAt: new Date(),
+      start,
+      finish,
     });
 
     return ctx.db.rides.findOne({ _id: record.insertedId });

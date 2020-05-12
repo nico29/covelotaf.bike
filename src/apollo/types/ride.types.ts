@@ -13,6 +13,8 @@ export default gql`
     description: String @column
     points: [Point!]! @column
     distance: Float! @column
+    start: String! @column
+    finish: String! @column
     previewURL: String!
     color: String!
   }
