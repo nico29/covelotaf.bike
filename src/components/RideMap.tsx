@@ -106,13 +106,10 @@ class RidesMap extends React.Component<RideMapProps> {
 
     // Add geolocate control to the map
     this.geoControl = new Mapbox.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
       fitBoundsOptions: {
         maxZoom: 11,
       },
-      trackUserLocation: true,
+      showAccuracyCircle: false,
     });
     this.map.addControl(this.geoControl, "top-right");
 
