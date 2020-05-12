@@ -79,6 +79,13 @@ const RidesMapPage: NextPage = () => {
               mapContainerID="rides-map"
               style={{ minHeight: "100%", position: "relative" }}
               focusedRide={selectedRide}
+              onRideClicked={(id) => {
+                const rideListItemContainer = document.querySelector(
+                  `#ride-${id}`
+                );
+                rideListItemContainer?.scrollIntoView({ behavior: "smooth" });
+                setSelectedRide(id);
+              }}
             />
           </div>
         </div>

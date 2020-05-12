@@ -9,6 +9,7 @@ const RideListItem: React.FunctionComponent<{
 }> = ({ ride, onRideClicked, focused }) => {
   return (
     <div
+      id={`ride-${ride.id}`}
       className={`w-full rounded shadow-sm p-2 mb-2 bg-white border border-solid ${
         focused ? "border-gray-600" : "border-gray-400"
       }`}

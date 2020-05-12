@@ -2,7 +2,6 @@ import Mapbox, { GeoJSONSource } from "mapbox-gl";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Ride, Maybe } from "../server/types";
-import RideMapRideDetailCard from "./RideMapRideDetailCard";
 
 interface RideMapProps {
   mapContainerID: string;
@@ -10,23 +9,13 @@ interface RideMapProps {
   focusedRide?: string;
   rides?: Ride[];
   style?: React.CSSProperties;
+  onRideClicked?: (id: string) => void;
 }
 
-class RidesMap extends React.Component<
-  RideMapProps,
-  { showingTooltip: boolean }
-> {
+class RidesMap extends React.Component<RideMapProps> {
   private map: Mapbox.Map;
   private zoomControl: Mapbox.NavigationControl;
   private geoControl: Mapbox.GeolocateControl;
-  private tooltipContainer: HTMLDivElement;
-
-  constructor(props: RideMapProps) {
-    super(props);
-    this.state = {
-      showingTooltip: false,
-    };
-  }
 
   private computeMapData(props: RideMapProps) {
     return {
@@ -100,25 +89,6 @@ class RidesMap extends React.Component<
     }
   }
 
-  private toggleRideTooltip(ride?: Ride) {
-    if (ride) {
-      ReactDOM.render(
-        React.createElement(RideMapRideDetailCard, {
-          ride,
-        }),
-        this.tooltipContainer
-      );
-      this.setState({ showingTooltip: true });
-    } else {
-      this.hideRideTooltip();
-    }
-  }
-
-  private hideRideTooltip() {
-    ReactDOM.unmountComponentAtNode(this.tooltipContainer);
-    this.setState({ showingTooltip: false });
-  }
-
   componentDidMount() {
     Mapbox.accessToken = process.env.MAPBOX_TOKEN as string;
 
@@ -147,15 +117,6 @@ class RidesMap extends React.Component<
     this.map.addControl(this.geoControl, "top-right");
 
     this.map.on("load", () => {
-      // Container to put React generated content in.
-      this.tooltipContainer = document.createElement("div");
-
-      const tooltip = new Mapbox.Marker(this.tooltipContainer, {
-        offset: [-120, 0],
-      })
-        .setLngLat([0, 0])
-        .addTo(this.map);
-
       this.map.addSource("rides-source", {
         type: "geojson",
         data: this.computeMapData(this.props) as any,
@@ -170,7 +131,7 @@ class RidesMap extends React.Component<
           "line-cap": "round",
         },
         paint: {
-          "line-width": ["match", ["get", "focused"], "true", 6, 4],
+          "line-width": ["match", ["get", "focused"], "true", 6, 5],
           "line-color": ["get", "color"],
           "line-opacity": ["match", ["get", "focused"], "true", 1, 0.6],
         },
@@ -187,31 +148,10 @@ class RidesMap extends React.Component<
 
       this.map.on("click", "rides", (event) => {
         const features = this.map.queryRenderedFeatures(event.point);
-        tooltip.setLngLat(event.lngLat);
         this.map.getCanvas().style.cursor = features.length ? "pointer" : "";
         const rideLayer = features.find((f) => f.layer.id === "rides");
         const ride = rideLayer?.properties as Maybe<Ride>;
-        try {
-          ride.creator = JSON.parse((ride.creator as unknown) as string);
-          this.toggleRideTooltip(ride);
-        } catch {
-          this.toggleRideTooltip(null);
-        }
-      });
-
-      this.map.on("click", (event) => {
-        const features = this.map.queryRenderedFeatures(event.point);
-        // check if the click was made outside the "rides" layer
-        const topFeature = features[0];
-        if (
-          !topFeature ||
-          (topFeature &&
-            topFeature.layer.id !== "rides" &&
-            this.state.showingTooltip)
-        ) {
-          event.preventDefault();
-          this.hideRideTooltip();
-        }
+        this.props.onRideClicked && this.props.onRideClicked(ride.id);
       });
     });
   }
@@ -220,9 +160,7 @@ class RidesMap extends React.Component<
     const source = this.map.getSource("rides-source") as GeoJSONSource;
 
     source.setData(this.computeMapData(nextProps) as any);
-
     if (nextProps.focusedRide) {
-      // this.map.flyTo({ center: [this.getXStart(nextProps), this.getYStart(nextProps)] });
       this.map.fitBounds(
         [
           [this.getXStart(nextProps), this.getYStart(nextProps)],
