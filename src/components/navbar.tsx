@@ -48,7 +48,7 @@ export default function Navbar() {
                 {user && (
                   <div>
                     <button
-                      className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid hover:underline"
+                      className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid "
                       id="user-menu"
                       aria-label="User menu"
                       aria-haspopup="true"
@@ -58,7 +58,7 @@ export default function Navbar() {
                         src="/bike_icon.png"
                         alt="bicycle icon"
                       />
-                      <span className="font-semibold pl-2">
+                      <span className="font-semibold pl-2 hover:text-gray-400">
                         {user && user.username}
                       </span>
                     </button>
@@ -88,20 +88,21 @@ export default function Navbar() {
                 )}
                 {/* dropdown menu */}
                 {dropdownOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10">
                     <div
                       className="py-1 rounded-md bg-white shadow-xs"
                       role="menu"
                       aria-orientation="vertical"
                       aria-labelledby="user-menu"
                     >
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        role="menuitem"
-                      >
-                        Dashboard
-                      </a>
+                      <Link href="/dashboard">
+                        <a
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          role="menuitem"
+                        >
+                          Dashboard
+                        </a>
+                      </Link>
                       <span
                         onClick={async () => {
                           await logout();

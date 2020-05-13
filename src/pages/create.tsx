@@ -23,6 +23,16 @@ const CREATE_RIDE_MUTATION = gql`
     }
   }
 `;
+const CURRENT_USER_RIDES = gql`
+  query CURRENT_USER_RIDES {
+    currentUser {
+      id
+      rides {
+        id
+      }
+    }
+  }
+`;
 
 const ErrorMessage: React.FunctionComponent<{ error?: ApolloError }> = ({
   error,
@@ -80,7 +90,7 @@ const RideCreationPage: NextPage = () => {
   const [createRide, { loading, error: createRideError, data }] = useMutation<
     { createRide: Ride },
     MutationCreateRideArgs
-  >(CREATE_RIDE_MUTATION);
+  >(CREATE_RIDE_MUTATION, { refetchQueries: [{ query: CURRENT_USER_RIDES }] });
   const [directionPlugin, setDirectionPlugin] = React.useState<
     MapboxDirections
   >(null);
