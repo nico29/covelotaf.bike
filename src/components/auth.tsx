@@ -21,6 +21,7 @@ const Auth: FunctionComponent<{}> = (props) => {
   );
 
   if (loading) return <p>Chargement...</p>;
+  console.log(data);
   if (!data?.currentUser) Router.replace("/login");
 
   return <>{props.children}</>;

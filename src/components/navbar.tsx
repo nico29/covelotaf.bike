@@ -3,6 +3,7 @@ import Link from "next/link";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import { User } from "../server/types";
+import { useRouter } from "next/router";
 
 const CURRENT_USER_QUERY = gql`
   query CURRENT_USER {
@@ -15,9 +16,45 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
+const AuthButton: React.FunctionComponent<{
+  text: "Connexion" | "Créer un compte";
+}> = ({ text }) => {
+  const href = text === "Connexion" ? "/login" : "/register";
+  return (
+    <div className="sm:flex sm:justify-center lg:justify-start">
+      <div className="rounded-md shadow">
+        <Link href={href}>
+          <a className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out md:py-2 md:text-sm md:px-4">
+            {text}
+          </a>
+        </Link>
+      </div>
+    </div>
+  );
+};
+const ConnectionSubmenu: React.FunctionComponent<{ user?: User }> = ({
+  user,
+}) => {
+  const router = useRouter();
+  const pathname = router.pathname.replace("/", "");
+
+  if (user) return null;
+  if (pathname === "login") {
+    return <AuthButton text="Créer un compte" />;
+  } else if (pathname === "register") {
+    return <AuthButton text="Connexion" />;
+  } else {
+    return (
+      <>
+        <AuthButton text="Connexion" />
+        <AuthButton text="Créer un compte" />
+      </>
+    );
+  }
+};
+
 export default function Navbar() {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const { data } = useQuery<{ currentUser?: User }>(CURRENT_USER_QUERY, {
     ssr: false,
   });
@@ -33,72 +70,20 @@ export default function Navbar() {
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
-              <div
-                className="ml-3 relative"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                {user && (
-                  <div>
-                    <button
-                      className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid "
-                      id="user-menu"
-                      aria-label="User menu"
-                      aria-haspopup="true"
-                    >
-                      <img
-                        className="h-8 w-8 "
-                        src="/bike_icon.png"
-                        alt="bicycle icon"
-                      />
-                      <span className="font-semibold pl-2 hover:text-gray-400">
-                        {user && user.username}
-                      </span>
-                    </button>
-                  </div>
-                )}
-                {!user && (
-                  <div className="flex flex-row items-center">
-                    <div className="sm:flex sm:justify-center lg:justify-start">
-                      <div className="rounded-md shadow">
-                        <Link href="/login">
-                          <a className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out md:py-2 md:text-sm md:px-4">
-                            Connexion
-                          </a>
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="sm:flex sm:justify-center lg:justify-start ml-2">
-                      <div className="rounded-md shadow">
-                        <Link href="/register">
-                          <a className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out md:py-2 md:text-sm md:px-4">
-                            Créer un compte
-                          </a>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {/* dropdown menu */}
-                {dropdownOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10">
-                    <div
-                      className="py-1 rounded-md bg-white shadow-xs"
-                      role="menu"
-                      aria-orientation="vertical"
-                      aria-labelledby="user-menu"
-                    >
-                      <Link href="/dashboard">
-                        <a
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          role="menuitem"
-                        >
-                          Dashboard
-                        </a>
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
+              {user && (
+                <div className="flex items-center text-sm rounded-full text-white  hover:text-gray-400 focus:outline-none focus:shadow-solid ">
+                  <Link href="/dashboard">
+                    <a className="font-semibold pl-2">
+                      {user && user.username}
+                    </a>
+                  </Link>
+                </div>
+              )}
+              {!user && (
+                <div className="flex flex-row items-center space-x-2">
+                  <ConnectionSubmenu user={user} />
+                </div>
+              )}
             </div>
           </div>
 

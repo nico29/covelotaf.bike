@@ -6,6 +6,7 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import { User } from "../server/types";
 import NavigationBar from "../components/navbar";
 import RideCard from "../components/RideCard";
+import { useRouter } from "next/router";
 import DashboardEmptyRide from "../components/DashboardEmptyRide";
 
 const CURRENT_USER_QUERY = gql`
@@ -50,6 +51,9 @@ const DasboardPage: NextPage = () => {
   const [logout, { loading: loginOut }] = useMutation(LOGOUT_MUTATION, {
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
+
+  const router = useRouter();
+
   if (loading)
     return (
       <Auth>
@@ -59,7 +63,7 @@ const DasboardPage: NextPage = () => {
     );
 
   const { currentUser: user } = data;
-
+  if (!user) router.replace("/login");
   return (
     <Auth>
       <main className="min-h-screen">
@@ -71,7 +75,10 @@ const DasboardPage: NextPage = () => {
             </h1>
             <button
               className="ml-4 mb-4 flex flex-row items-center px-3 py-2 bg-indigo-500 rounded-md text-base font-medium text-white hover:bg-indigo-400 focus:outline-none focus:text-white focus:bg-indigo-600"
-              onClick={async () => await logout()}
+              onClick={async () => {
+                await logout();
+                router.replace("/");
+              }}
             >
               <svg
                 className="h-4 w-4 text-white"
