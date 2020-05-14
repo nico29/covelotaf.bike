@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import gql from "graphql-tag";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/react-hooks";
 import { User } from "../server/types";
 
 const CURRENT_USER_QUERY = gql`
@@ -15,19 +15,11 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
-const LOGOUT_MUTATION = gql`
-  mutation {
-    logout
-  }
-`;
 export default function Navbar() {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const { data } = useQuery<{ currentUser?: User }>(CURRENT_USER_QUERY, {
     ssr: false,
-  });
-  const [logout] = useMutation(LOGOUT_MUTATION, {
-    refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
   const user = data?.currentUser;
   return (
@@ -103,15 +95,6 @@ export default function Navbar() {
                           Dashboard
                         </a>
                       </Link>
-                      <span
-                        onClick={async () => {
-                          await logout();
-                        }}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                        role="menuitem"
-                      >
-                        Se déconnecter
-                      </span>
                     </div>
                   </div>
                 )}
@@ -179,21 +162,11 @@ export default function Navbar() {
           </div>
           <div className="mt-3 px-2">
             {user && (
-              <>
-                <Link href="/dashboard">
-                  <a className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">
-                    Dashboard
-                  </a>
-                </Link>
-                <span
-                  onClick={async () => {
-                    await logout();
-                  }}
-                  className="cursor-pointer mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
-                >
-                  Se déconnecter
-                </span>
-              </>
+              <Link href="/dashboard">
+                <a className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">
+                  Dashboard
+                </a>
+              </Link>
             )}
             {!user && (
               <>

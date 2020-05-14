@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import { withApollo } from "../apollo/client";
 import gql from "graphql-tag";
 import Auth from "../components/auth";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import { User } from "../server/types";
 import NavigationBar from "../components/navbar";
 import RideCard from "../components/RideCard";
@@ -34,6 +34,12 @@ const CURRENT_USER_QUERY = gql`
   }
 `;
 
+const LOGOUT_MUTATION = gql`
+  mutation {
+    logout
+  }
+`;
+
 const DasboardPage: NextPage = () => {
   const { data, loading } = useQuery<{ currentUser: User }>(
     CURRENT_USER_QUERY,
@@ -41,6 +47,9 @@ const DasboardPage: NextPage = () => {
       ssr: false,
     }
   );
+  const [logout, { loading: loginOut }] = useMutation(LOGOUT_MUTATION, {
+    refetchQueries: [{ query: CURRENT_USER_QUERY }],
+  });
   if (loading)
     return (
       <Auth>
@@ -60,6 +69,19 @@ const DasboardPage: NextPage = () => {
             <h1 className="text-3xl tracking-wide text-gray-800 font-semibold mb-4">
               Mes informations
             </h1>
+            <button
+              className="ml-4 mb-4 flex flex-row items-center px-3 py-2 bg-indigo-500 rounded-md text-base font-medium text-white hover:bg-indigo-400 focus:outline-none focus:text-white focus:bg-indigo-600"
+              onClick={async () => await logout()}
+            >
+              <svg
+                className="h-4 w-4 text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+              </svg>
+              Déconnexion{loginOut ? "..." : ""}
+            </button>
             <div className="space-y-2 ml-4">
               <div className="flex flex-row items-center">
                 <p className="font-semibold text-gray-700 text-lg">
@@ -102,7 +124,7 @@ const DasboardPage: NextPage = () => {
             </h1>
             <div>
               {!user.rides || (!user?.rides.length && <DashboardEmptyRide />)}
-              <div className="grid grid-cols-3 gap-4 ml-4">
+              <div className="grid sm:md:grid-cols-1 md:grid-cols-3 gap-4 ml-4">
                 {user.rides?.map((ride) => (
                   <RideCard ride={ride} key={ride.id} />
                 ))}
