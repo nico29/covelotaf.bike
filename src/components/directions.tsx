@@ -18,7 +18,7 @@ class DirectionsManager extends React.PureComponent<DirectionInputProps> {
   componentDidMount() {
     const { mapContainerID, onMapLoad, onReceiveDirections } = this.props;
     // 0. set access token to use API
-    Mapbox.accessToken = process.env.MAPBOX_TOKEN as string;
+    Mapbox.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string;
     // 1. create the map entity
     this.map = new Mapbox.Map({
       container: mapContainerID,

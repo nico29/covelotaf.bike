@@ -90,7 +90,7 @@ class RidesMap extends React.Component<RideMapProps> {
   }
 
   componentDidMount() {
-    Mapbox.accessToken = process.env.MAPBOX_TOKEN as string;
+    Mapbox.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string;
 
     this.map = new Mapbox.Map({
       container: this.props.mapContainerID,

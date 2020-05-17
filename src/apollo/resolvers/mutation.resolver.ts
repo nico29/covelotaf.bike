@@ -9,11 +9,7 @@ import { randomBytes } from "crypto";
 import * as jwt from "jsonwebtoken";
 import { ObjectID } from "mongodb";
 import { promisify } from "util";
-import {
-  ENABLE_INVITE_CODE,
-  PASSWORD_REGEX,
-  SESSION_SECRET,
-} from "../../config";
+import { PASSWORD_REGEX } from "../../config";
 import { MutationResolvers, Point } from "../../server/types";
 import Mapbox from "@mapbox/mapbox-sdk/services/geocoding";
 
@@ -22,7 +18,7 @@ export const resolvers: MutationResolvers = {
     const { inviteCode, ...inputWOInvite } = input;
     let hasValidInvitation: boolean;
     // 0. check if there is an invite code
-    if (ENABLE_INVITE_CODE) {
+    if (process.env.ENABLE_INVITE_CODE) {
       if (!inviteCode) throw new ForbiddenError("invite code required");
       // check if the invite code if valid
       const invite = await ctx.db.invitations.findOne({
@@ -69,7 +65,7 @@ export const resolvers: MutationResolvers = {
     // 5. generate a jsonwebtoken from the user id
     const sessionToken = jwt.sign(
       { userID: user._id.toHexString() },
-      SESSION_SECRET
+      process.env.SESSION_SECRET
     );
 
     ctx.response.setHeader(
@@ -96,7 +92,7 @@ export const resolvers: MutationResolvers = {
     // 3. craft the session token
     const sessionToken = jwt.sign(
       { userID: user._id.toHexString() },
-      SESSION_SECRET
+      process.env.SESSION_SECRET
     );
 
     ctx.response.setHeader(
@@ -189,7 +185,7 @@ export const resolvers: MutationResolvers = {
     // 5. log the user in and return it
     const sessionToken = jwt.sign(
       { userID: user._id.toHexString() },
-      SESSION_SECRET
+      process.env.SESSION_SECRET
     );
     ctx.response.setHeader(
       "Set-Cookie",
@@ -219,7 +215,9 @@ export const resolvers: MutationResolvers = {
     }
 
     // reverse geocode start point end endpoint
-    const geocoder = Mapbox({ accessToken: process.env.MAPBOX_TOKEN });
+    const geocoder = Mapbox({
+      accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
+    });
     const startPoint = [...input.points].reverse().pop();
     const startResponse = await geocoder
       .reverseGeocode({

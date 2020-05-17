@@ -1,6 +1,5 @@
 import { RideResolvers } from "../../server/types";
 import * as polyline from "@mapbox/polyline";
-import { MAPBOX_TOKEN } from "../../config";
 export const resolvers: RideResolvers = {
   id(ride) {
     return ride._id.toHexString();
@@ -16,7 +15,7 @@ export const resolvers: RideResolvers = {
     );
     const apiURL = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/path-5+f44-0.9(${encodeURIComponent(
       line
-    )})/auto/600x400?access_token=${MAPBOX_TOKEN}`;
+    )})/auto/600x400?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`;
     return apiURL;
   },
 

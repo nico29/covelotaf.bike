@@ -4,7 +4,6 @@ import * as jwt from "jsonwebtoken";
 import { NextApiRequest, NextApiResponse } from "next";
 import DatabaseManager from "./database";
 import { UserEntity, RideEntity, InvitationEntity } from "./types";
-import { SESSION_SECRET } from "../config";
 type Database = {
   users: Collection<UserEntity>;
   rides: Collection<RideEntity>;
@@ -24,7 +23,7 @@ export class GraphQLContext implements Context {
     const session = request.cookies.session;
     if (session) {
       try {
-        const { userID } = jwt.verify(session, SESSION_SECRET) as {
+        const { userID } = jwt.verify(session, process.env.SESSION_SECRET) as {
           userID: string;
         };
         this.userID = userID;
