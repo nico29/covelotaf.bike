@@ -20,5 +20,6 @@ export default gql`
     logout: Boolean!
     requestPasswordReset(email: String!): Boolean!
     resetPassword(input: ResetPasswordInput!): User!
+    contactRideCreator(input: ContactRideCreatorInput!): Boolean!
   }
 `;

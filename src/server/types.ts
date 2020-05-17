@@ -34,6 +34,7 @@ export type Mutation = {
   logout: Scalars["Boolean"];
   requestPasswordReset: Scalars["Boolean"];
   resetPassword: User;
+  contactRideCreator: Scalars["Boolean"];
 };
 
 export type MutationCreateRideArgs = {
@@ -59,6 +60,10 @@ export type MutationRequestPasswordResetArgs = {
 
 export type MutationResetPasswordArgs = {
   input: ResetPasswordInput;
+};
+
+export type MutationContactRideCreatorArgs = {
+  input: ContactRideCreatorInput;
 };
 
 export type Ride = {
@@ -91,6 +96,12 @@ export type CreateRideInput = {
   points: Array<PointInput>;
   description?: Maybe<Scalars["String"]>;
   distance: Scalars["Float"];
+};
+
+export type ContactRideCreatorInput = {
+  userID: Scalars["ID"];
+  mailObject: Scalars["String"];
+  mailContent: Scalars["String"];
 };
 
 export type User = {
@@ -246,6 +257,7 @@ export type ResolversTypes = {
   Point: ResolverTypeWrapper<Point>;
   PointInput: PointInput;
   CreateRideInput: CreateRideInput;
+  ContactRideCreatorInput: ContactRideCreatorInput;
   User: ResolverTypeWrapper<UserEntity>;
   Invitation: ResolverTypeWrapper<Invitation>;
   RegisterUserInput: RegisterUserInput;
@@ -265,6 +277,7 @@ export type ResolversParentTypes = {
   Point: Point;
   PointInput: PointInput;
   CreateRideInput: CreateRideInput;
+  ContactRideCreatorInput: ContactRideCreatorInput;
   User: UserEntity;
   Invitation: Invitation;
   RegisterUserInput: RegisterUserInput;
@@ -411,6 +424,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationResetPasswordArgs, "input">
+  >;
+  contactRideCreator?: Resolver<
+    ResolversTypes["Boolean"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationContactRideCreatorArgs, "input">
   >;
 };
 

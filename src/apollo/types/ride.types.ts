@@ -35,4 +35,10 @@ export default gql`
     description: String
     distance: Float!
   }
+
+  input ContactRideCreatorInput {
+    userID: ID!
+    mailObject: String!
+    mailContent: String!
+  }
 `;
