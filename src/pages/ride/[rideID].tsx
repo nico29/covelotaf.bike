@@ -87,7 +87,7 @@ const RideDetailPage: NextPage = () => {
                     <span className="text-lg">{ride.name}</span>
                   </div>
                   <div className="mt-2 mb-2">
-                    <span className="font-semibold text-sm">Distance :</span>
+                    <span className="font-semibold text-sm">Distance : </span>
                     <span className="text-sm">{toKM(ride.distance)}</span>
                   </div>
                   <div className="mt-2 mb-2">
@@ -122,7 +122,7 @@ const RideDetailPage: NextPage = () => {
               <RideMap
                 rides={[ride]}
                 mapContainerID="rides-map"
-                style={{ minHeight: "80vh", position: "relative" }}
+                style={{ minHeight: "85vh", position: "relative" }}
                 focusedRide={ride.id}
               />
             </div>

@@ -94,13 +94,14 @@ const RideCreationPage: NextPage = () => {
   const [directionPlugin, setDirectionPlugin] = React.useState<
     MapboxDirections
   >(null);
+  const initialValues = {
+    ridename: "",
+    ridedescription: "",
+    ridepoints: [],
+    ridedistance: 0,
+  };
   const formik = useFormik({
-    initialValues: {
-      ridename: "",
-      ridedescription: "",
-      ridepoints: [],
-      ridedistance: 0,
-    },
+    initialValues,
     validate(values) {
       if (!values.ridename) {
         return { ridename: "Le nom du trajet est obligatoire" };
@@ -119,14 +120,7 @@ const RideCreationPage: NextPage = () => {
         },
       }).then(() => {
         setSubmitting(false);
-        resetForm({
-          values: {
-            ridename: "",
-            ridedescription: "",
-            ridepoints: [],
-            ridedistance: 0,
-          },
-        });
+        resetForm();
         (document.querySelector(
           "#mapbox-directions-origin-input input"
         ) as HTMLInputElement).value = "";

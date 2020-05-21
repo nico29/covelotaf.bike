@@ -156,7 +156,7 @@ class RidesMap extends React.Component<RideMapProps> {
   shouldComponentUpdate(nextProps: RideMapProps) {
     const source = this.map.getSource("rides-source") as GeoJSONSource;
 
-    source.setData(this.computeMapData(nextProps) as any);
+    source?.setData(this.computeMapData(nextProps) as any);
     if (nextProps.focusedRide) {
       this.map.fitBounds(
         [

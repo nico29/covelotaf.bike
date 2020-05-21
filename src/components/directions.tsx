@@ -33,7 +33,7 @@ class DirectionsManager extends React.PureComponent<DirectionInputProps> {
 
     // 3. init the direction plugin
     this.directions = new MapboxDirections({
-      accessToken: process.env.MAPBOX_TOKEN as string,
+      accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string,
       unit: "metric",
       profile: "mapbox/cycling",
       steps: false,
