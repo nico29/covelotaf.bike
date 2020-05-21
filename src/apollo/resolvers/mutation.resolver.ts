@@ -9,9 +9,10 @@ import { randomBytes } from "crypto";
 import * as jwt from "jsonwebtoken";
 import { ObjectID } from "mongodb";
 import { promisify } from "util";
-import { PASSWORD_REGEX } from "../../config";
+import { PASSWORD_REGEX, RIDE_MAIL_KEY } from "../../config";
 import { MutationResolvers, Point } from "../../server/types";
 import Mapbox from "@mapbox/mapbox-sdk/services/geocoding";
+import * as sendgrid from "@sendgrid/mail";
 
 export const resolvers: MutationResolvers = {
   async registerUser(_, { input }, ctx) {
@@ -113,7 +114,7 @@ export const resolvers: MutationResolvers = {
       "Set-Cookie",
       cookies.serialize("session", "", {
         httpOnly: true,
-        maxAge: -1,
+        expires: new Date(0),
         path: "/",
       })
     );
@@ -265,5 +266,45 @@ export const resolvers: MutationResolvers = {
 
     await ctx.db.rides.deleteOne({ _id: rideID });
     return ride;
+  },
+
+  async contactRideCreator(_, { input }, ctx) {
+    sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+
+    const [ride, currentUser] = await Promise.all([
+      ctx.db.rides.findOne({
+        _id: new ObjectID(input.rideID),
+      }),
+      ctx.db.users.findOne({ _id: new ObjectID(ctx.userID) }),
+    ]);
+
+    if (!ride) throw new UserInputError("NO_RIDE");
+
+    if (ride.creatorID.toHexString() === ctx.userID) {
+      throw new UserInputError("CANNOT_CONTACT_SELF");
+    }
+
+    const user = await ctx.db.users.findOne({ _id: ride.creatorID });
+    if (!user) throw new UserInputError("INVALID_RIDE");
+
+    try {
+      await sendgrid.send({
+        from: process.env.SENDER_EMAIL,
+        to: [user.email],
+        templateId: RIDE_MAIL_KEY,
+        subject: `[Covelotaf.bike] - ${input.mailObject}`,
+        dynamicTemplateData: {
+          creatorName: user.firstname || user.username,
+          senderName: currentUser.firstname || currentUser.username,
+          rideName: ride.name,
+          message: input.mailContent,
+          senderEmail: currentUser.email,
+        },
+      });
+      return true;
+    } catch (error) {
+      console.log(JSON.stringify(error));
+      return false;
+    }
   },
 };

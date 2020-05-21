@@ -113,7 +113,7 @@ const RideDetailPage: NextPage = () => {
                     Contacter {ride.creator.username}
                   </button>
                   {showContactForm && (
-                    <RideCreatorContactForm rideCreatorID={ride.creator.id} />
+                    <RideCreatorContactForm rideID={ride.id} />
                   )}
                 </div>
               </div>

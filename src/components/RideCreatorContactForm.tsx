@@ -9,9 +9,10 @@ const CONTACT_RIDE_CREATOR_MUTATION = gql`
     contactRideCreator(input: $input)
   }
 `;
+
 const RideCreatorContactForm: React.FunctionComponent<{
-  rideCreatorID: string;
-}> = () => {
+  rideID: string;
+}> = (props) => {
   const [contactCreator, { error, loading }] = useMutation<
     { contactRideCreator: boolean },
     MutationContactRideCreatorArgs
@@ -22,7 +23,7 @@ const RideCreatorContactForm: React.FunctionComponent<{
       mailSubject: "",
     },
     validate(values) {
-      const errors: typeof values = { mailContent: "", mailSubject: "" };
+      const errors: { mailContent?: string; mailSubject?: string } = {};
       if (!values.mailContent)
         errors.mailContent = "Vous devenez définir un objet pour le mail";
       if (!values.mailSubject)
@@ -30,7 +31,20 @@ const RideCreatorContactForm: React.FunctionComponent<{
       return errors;
     },
     validateOnChange: false,
-    onSubmit(values) {},
+    onSubmit(values, { setSubmitting, resetForm }) {
+      contactCreator({
+        variables: {
+          input: {
+            mailContent: values.mailContent,
+            mailObject: values.mailSubject,
+            rideID: props.rideID,
+          },
+        },
+      }).then(() => {
+        setSubmitting(false);
+        resetForm();
+      });
+    },
   });
   return (
     <form onSubmit={formik.handleSubmit}>

@@ -37,8 +37,8 @@ export default gql`
   }
 
   input ContactRideCreatorInput {
-    userID: ID!
     mailObject: String!
     mailContent: String!
+    rideID: String!
   }
 `;

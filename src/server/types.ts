@@ -99,9 +99,9 @@ export type CreateRideInput = {
 };
 
 export type ContactRideCreatorInput = {
-  userID: Scalars["ID"];
   mailObject: Scalars["String"];
   mailContent: Scalars["String"];
+  rideID: Scalars["String"];
 };
 
 export type User = {

@@ -716,20 +716,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "userID",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
             "name": "mailObject",
             "description": null,
             "type": {
@@ -745,6 +731,20 @@
           },
           {
             "name": "mailContent",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "rideID",
             "description": null,
             "type": {
               "kind": "NON_NULL",
