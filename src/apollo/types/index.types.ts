@@ -18,8 +18,8 @@ export default gql`
     registerUser(input: RegisterUserInput!): User!
     login(email: String!, password: String!): User!
     logout: Boolean!
-    requestPasswordReset(email: String!): Boolean!
     resetPassword(input: ResetPasswordInput!): User!
     contactRideCreator(input: ContactRideCreatorInput!): Boolean!
+    requestPasswordReset(email: String!): Boolean!
   }
 `;

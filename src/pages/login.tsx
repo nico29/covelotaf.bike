@@ -81,14 +81,10 @@ const LoginPage: NextPage = () => {
       return errors;
     },
     onSubmit(values, { setSubmitting }) {
-      try {
-        login({ variables: { ...values } }).then(() => {
-          setSubmitting(false);
-          Router.push("/");
-        });
-      } catch {
-        alert("fail");
-      }
+      login({ variables: { ...values } }).then(() => {
+        setSubmitting(false);
+        Router.push("/");
+      });
     },
   });
   return (

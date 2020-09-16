@@ -41,8 +41,12 @@ export default gql`
   }
 
   input ResetPasswordInput {
-    token: String!
+    resetToken: String!
     password: String!
     passwordConfirmation: String!
+  }
+
+  type ResetPasswordPayload {
+    user: User!
   }
 `;

@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo } from "graphql";
 import { Context } from "./context";
 export type Maybe<T> = T | null;
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X];
 } &
@@ -32,9 +33,9 @@ export type Mutation = {
   registerUser: User;
   login: User;
   logout: Scalars["Boolean"];
-  requestPasswordReset: Scalars["Boolean"];
   resetPassword: User;
   contactRideCreator: Scalars["Boolean"];
+  requestPasswordReset: Scalars["Boolean"];
 };
 
 export type MutationCreateRideArgs = {
@@ -54,16 +55,16 @@ export type MutationLoginArgs = {
   password: Scalars["String"];
 };
 
-export type MutationRequestPasswordResetArgs = {
-  email: Scalars["String"];
-};
-
 export type MutationResetPasswordArgs = {
   input: ResetPasswordInput;
 };
 
 export type MutationContactRideCreatorArgs = {
   input: ContactRideCreatorInput;
+};
+
+export type MutationRequestPasswordResetArgs = {
+  email: Scalars["String"];
 };
 
 export type Ride = {
@@ -129,9 +130,14 @@ export type RegisterUserInput = {
 };
 
 export type ResetPasswordInput = {
-  token: Scalars["String"];
+  resetToken: Scalars["String"];
   password: Scalars["String"];
   passwordConfirmation: Scalars["String"];
+};
+
+export type ResetPasswordPayload = {
+  __typename?: "ResetPasswordPayload";
+  user: User;
 };
 
 export type AdditionalEntityFields = {
@@ -262,6 +268,9 @@ export type ResolversTypes = {
   Invitation: ResolverTypeWrapper<Invitation>;
   RegisterUserInput: RegisterUserInput;
   ResetPasswordInput: ResetPasswordInput;
+  ResetPasswordPayload: ResolverTypeWrapper<
+    Omit<ResetPasswordPayload, "user"> & { user: ResolversTypes["User"] }
+  >;
   AdditionalEntityFields: AdditionalEntityFields;
 };
 
@@ -282,6 +291,9 @@ export type ResolversParentTypes = {
   Invitation: Invitation;
   RegisterUserInput: RegisterUserInput;
   ResetPasswordInput: ResetPasswordInput;
+  ResetPasswordPayload: Omit<ResetPasswordPayload, "user"> & {
+    user: ResolversParentTypes["User"];
+  };
   AdditionalEntityFields: AdditionalEntityFields;
 };
 
@@ -413,12 +425,6 @@ export type MutationResolvers<
     RequireFields<MutationLoginArgs, "email" | "password">
   >;
   logout?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  requestPasswordReset?: Resolver<
-    ResolversTypes["Boolean"],
-    ParentType,
-    ContextType,
-    RequireFields<MutationRequestPasswordResetArgs, "email">
-  >;
   resetPassword?: Resolver<
     ResolversTypes["User"],
     ParentType,
@@ -430,6 +436,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationContactRideCreatorArgs, "input">
+  >;
+  requestPasswordReset?: Resolver<
+    ResolversTypes["Boolean"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationRequestPasswordResetArgs, "email">
   >;
 };
 
@@ -492,6 +504,14 @@ export type InvitationResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
+export type ResetPasswordPayloadResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["ResetPasswordPayload"] = ResolversParentTypes["ResetPasswordPayload"]
+> = {
+  user?: Resolver<ResolversTypes["User"], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type Resolvers<ContextType = Context> = {
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -499,6 +519,7 @@ export type Resolvers<ContextType = Context> = {
   Point?: PointResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   Invitation?: InvitationResolvers<ContextType>;
+  ResetPasswordPayload?: ResetPasswordPayloadResolvers<ContextType>;
 };
 
 /**

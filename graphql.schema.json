@@ -273,37 +273,6 @@
             "deprecationReason": null
           },
           {
-            "name": "requestPasswordReset",
-            "description": null,
-            "args": [
-              {
-                "name": "email",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "resetPassword",
             "description": null,
             "args": [
@@ -347,6 +316,37 @@
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "ContactRideCreatorInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "requestPasswordReset",
+            "description": null,
+            "args": [
+              {
+                "name": "email",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -982,7 +982,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "token",
+            "name": "resetToken",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -1025,6 +1025,33 @@
           }
         ],
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ResetPasswordPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "user",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
